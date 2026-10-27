@@ -1,0 +1,670 @@
+/* =====================================================
+   style.css … アプリの見た目
+   ===================================================== */
+
+/* 色をまとめて決めておく（あとで色を変えたいときはここだけ直せばOK） */
+:root {
+  --paper: #f7f3ea;      /* 背景：和紙のような色 */
+  --card: #fffdf8;       /* カードの色 */
+  --ink: #1f2a36;        /* 文字：墨のような紺 */
+  --sub: #5d6773;        /* うすい文字 */
+  --line: #e2dccd;       /* 区切り線 */
+  --shu: #c8442b;        /* アクセント：鳥居の朱色 */
+  --shu-dark: #a5341f;   /* 濃い朱色 */
+  --shu-soft: #f6e1da;   /* うすい朱色 */
+  --ok: #2f7d5b;         /* 行ける駅：緑 */
+  --ok-soft: #e1efe7;    /* うすい緑 */
+  --ng: #a8a29a;         /* 行けない駅：灰色 */
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* ----- 全体のならび方 -----
+   スマホ：上に地図、下にパネル
+   パソコン（横幅900px以上）：左にパネル、右に地図 */
+.app {
+  display: flex;
+  flex-direction: column-reverse;
+  min-height: 100%;
+}
+
+.map-wrap {
+  position: sticky;
+  top: 0;
+  height: 45vh;
+  z-index: 1;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+.panel {
+  position: relative;
+  z-index: 2;
+  padding: 20px 16px 32px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  .app {
+    flex-direction: row;
+    height: 100%;
+  }
+  .panel {
+    width: 420px;
+    flex-shrink: 0;
+    height: 100%;
+    overflow-y: auto;
+    border-top: none;
+    border-right: 1px solid var(--line);
+  }
+  .map-wrap {
+    flex: 1;
+    height: 100%;
+  }
+}
+
+/* ----- 見出し ----- */
+.panel-header {
+  margin-bottom: 16px;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--shu);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+}
+h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.block {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.block-title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.block-title small {
+  color: var(--sub);
+  font-weight: 500;
+}
+.hint {
+  margin: 6px 0 0;
+  color: var(--sub);
+  font-size: 12px;
+}
+.hint.is-error {
+  color: var(--shu);
+  font-weight: 700;
+}
+
+/* ----- 入力欄 ----- */
+input[type="number"],
+input[type="text"],
+input[type="time"],
+select {
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  width: 100%;
+}
+select {
+  font-size: 17px;
+  font-weight: 700;
+}
+input:focus,
+select:focus {
+  outline: 2px solid var(--shu);
+  outline-offset: 1px;
+}
+
+.budget-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.budget-row input {
+  font-size: 24px;
+  font-weight: 700;
+  width: 140px;
+}
+.yen {
+  font-size: 18px;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 12px 0;
+  accent-color: var(--shu);
+}
+
+.field-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 13px;
+  color: var(--sub);
+}
+
+/* 時間の入力 */
+.time-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.time-row label {
+  flex: 1;
+}
+.time-row .field-label {
+  margin-top: 0;
+}
+.time-sep {
+  padding-bottom: 10px;
+  color: var(--sub);
+}
+
+/* 片道・往復の切りかえ */
+.toggle {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.toggle label {
+  flex: 1;
+  cursor: pointer;
+}
+.toggle input {
+  position: absolute;
+  opacity: 0;
+}
+.toggle span {
+  display: block;
+  text-align: center;
+  padding: 8px 4px;
+  font-size: 14px;
+}
+.toggle input:checked + span {
+  background: var(--ink);
+  color: #fff;
+}
+.toggle input:focus-visible + span {
+  outline: 2px solid var(--shu);
+}
+
+/* 新幹線・特急のスイッチ */
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  cursor: pointer;
+}
+.switch input {
+  position: absolute;
+  opacity: 0;
+}
+.switch-track {
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--ng);
+  transition: background 0.2s;
+}
+.switch-track::after {
+  /* 白い丸 */
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+}
+.switch input:checked + .switch-track {
+  background: var(--shu);
+}
+.switch input:checked + .switch-track::after {
+  transform: translateX(20px);
+}
+.switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.switch-text {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.switch-text small {
+  display: block;
+  color: var(--sub);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ----- ジャンルのボタン（チップ） ----- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip input {
+  position: absolute;
+  opacity: 0;
+}
+.chip span {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+.chip input:checked + span {
+  background: var(--shu);
+  border-color: var(--shu);
+  color: #fff;
+}
+.chip input:focus-visible + span {
+  outline: 2px solid var(--ink);
+}
+
+/* ----- ボタン ----- */
+.button {
+  font: inherit;
+  font-weight: 700;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+}
+.button:hover {
+  background: var(--shu);
+}
+.button:disabled {
+  background: var(--ng);
+  cursor: default;
+}
+.button-main {
+  padding: 14px;
+  font-size: 17px;
+  background: var(--shu);
+}
+.button-main:hover {
+  background: var(--shu-dark);
+}
+.button-main.is-attention {
+  box-shadow: 0 0 0 4px var(--shu-soft);
+}
+.button-sub {
+  margin-top: 12px;
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+}
+.button-sub:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.button-small {
+  padding: 8px;
+  font-size: 14px;
+}
+.link-button {
+  font: inherit;
+  border: none;
+  background: none;
+  color: var(--shu);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* プランを作るボタンのまわり（スクロールしても画面の下に残る） */
+.generate {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin: 0 -16px 14px;
+  padding: 10px 16px 12px;
+  background: linear-gradient(to bottom, rgba(247, 243, 234, 0), var(--paper) 30%);
+}
+.stale-note {
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--shu-soft);
+  font-size: 13px;
+}
+
+/* ----- 行ける駅 ----- */
+.summary {
+  margin: 0 0 10px;
+  color: var(--sub);
+  font-size: 14px;
+}
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.result-card {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--ok);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+}
+.result-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.result-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.result-area {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sub);
+}
+.result-fare {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.result-meta {
+  margin: 2px 0 8px;
+  color: var(--sub);
+  font-size: 13px;
+}
+.spot-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.spot-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.empty {
+  color: var(--sub);
+  font-size: 14px;
+}
+
+/* ----- プラン ----- */
+.plan {
+  border: 2px solid var(--shu);
+}
+.plan-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.plan-count {
+  margin-left: 4px;
+  color: var(--shu);
+  font-size: 13px;
+}
+
+/* ルートの流れ（天王寺 → 奈良 → 天王寺） */
+.route-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.route-stop {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--shu);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+.route-stop.is-home {
+  background: var(--ink);
+}
+.route-arrow {
+  color: var(--sub);
+}
+
+/* 予算メーター */
+.meter {
+  margin-bottom: 8px;
+}
+.meter-text {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+.meter-bar {
+  height: 10px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  background: var(--shu);
+}
+.plan-stats {
+  margin: 0 0 14px;
+  color: var(--sub);
+  font-size: 13px;
+}
+
+/* 時間割 */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.step-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 10px;
+  padding-bottom: 12px;
+}
+.step-row::before {
+  /* 時刻のよこの縦線 */
+  content: "";
+  position: absolute;
+  left: 58px;
+  top: 10px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line);
+}
+.step-row:last-child::before {
+  display: none;
+}
+.time {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+}
+.step {
+  position: relative;
+  padding-left: 14px;
+}
+.step::before {
+  /* 丸い点 */
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 7px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.type-spot .step::before { background: var(--shu); }
+.type-walk .step::before { background: var(--ng); width: 8px; height: 8px; left: -4px; }
+.type-lunch .step::before { background: #d9a400; }
+.type-move .step {
+  padding: 8px 10px 8px 14px;
+  border-radius: 8px;
+  background: var(--paper);
+}
+.type-move .step::before { top: 15px; }
+.type-walk .step-title {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--sub);
+}
+.step-title {
+  margin: 0;
+  font-weight: 700;
+}
+.step-desc {
+  margin: 2px 0 0;
+  color: var(--sub);
+  font-size: 13px;
+}
+.rides {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  font-size: 12px;
+  color: var(--sub);
+}
+.plan-warning,
+.plan-info {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.plan-warning {
+  background: var(--shu-soft);
+}
+.plan-info {
+  background: var(--ok-soft);
+}
+
+/* ----- 下のメモ ----- */
+.note {
+  color: var(--sub);
+  font-size: 12px;
+}
+
+/* ----- 地図の上の部品 ----- */
+.fare-label {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 2px 6px;
+  box-shadow: none;
+}
+.fare-label::before {
+  display: none;
+}
+.is-zoomed-out .fare-label {
+  display: none;
+}
+.start-pin,
+.stop-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.start-pin {
+  width: 30px;
+  height: 30px;
+  background: var(--ink);
+  font-size: 14px;
+}
+.stop-pin {
+  width: 28px;
+  height: 28px;
+  background: var(--shu);
+  font-size: 14px;
+}
+.popup {
+  font-family: "Zen Maru Gothic", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.popup b {
+  font-size: 15px;
+}
+.popup-route {
+  margin: 6px 0 8px;
+  color: var(--sub);
+  font-size: 12px;
+}
+.popup .ng {
+  color: var(--shu);
+  font-weight: 700;
+}
+.popup-start {
+  font: inherit;
+  font-weight: 700;
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+}
+.popup-start:hover {
+  background: var(--shu);
+}

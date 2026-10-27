@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ひとり旅マップ</title>
+
+  <!-- 文字のデザイン（Googleフォント） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- 地図ライブラリ Leaflet の見た目 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- このアプリの見た目 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== 操作パネル（パソコンでは左、スマホでは地図の下） ===== -->
+    <aside class="panel">
+      <header class="panel-header">
+        <p class="eyebrow">中部〜中国地方・電車賃でえらぶ日帰りひとり旅</p>
+        <h1>ひとり旅マップ</h1>
+      </header>
+
+      <!-- 出発駅 -->
+      <section class="block">
+        <h2 class="block-title">出発駅</h2>
+        <select id="startSelect"></select>
+        <p class="hint">地図の駅をタップして「ここから出発」でも選べます</p>
+      </section>
+
+      <!-- 予算 -->
+      <section class="block">
+        <h2 class="block-title">電車賃の予算</h2>
+        <div class="budget-row">
+          <input type="number" id="budgetNumber" min="0" max="30000" step="10" value="5000">
+          <span class="yen">円</span>
+        </div>
+        <input type="range" id="budgetRange" min="0" max="30000" step="100" value="5000">
+
+        <div class="toggle" role="radiogroup" aria-label="片道か往復か">
+          <label>
+            <input type="radio" name="tripType" value="round" checked>
+            <span>往復（出発駅にもどる）</span>
+          </label>
+          <label>
+            <input type="radio" name="tripType" value="oneway">
+            <span>片道</span>
+          </label>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="useExpress" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+          <span class="switch-text">新幹線・特急も使う<small>特急料金も予算にふくめます</small></span>
+        </label>
+      </section>
+
+      <!-- 時間 -->
+      <section class="block">
+        <h2 class="block-title">使える時間</h2>
+        <div class="time-row">
+          <label>
+            <span class="field-label">出発</span>
+            <input type="time" id="departTime" value="08:00">
+          </label>
+          <span class="time-sep">〜</span>
+          <label>
+            <span class="field-label" id="backLabel">出発駅にもどる</span>
+            <input type="time" id="backTime" value="19:00">
+          </label>
+        </div>
+        <p id="timeNote" class="hint"></p>
+      </section>
+
+      <!-- ジャンル -->
+      <section class="block">
+        <h2 class="block-title">行きたいジャンル <small>（いくつでも）</small></h2>
+        <div id="genreList" class="chips"></div>
+
+        <label class="field-label" for="keyword">自分で書いてさがす</label>
+        <input type="text" id="keyword" placeholder="例：プラネタリウム　古墳　抹茶">
+      </section>
+
+      <!-- プランを作るボタン -->
+      <div class="generate">
+        <p id="staleNote" class="stale-note" hidden>条件が変わりました。ボタンを押すと、この条件でプランを作りなおします。</p>
+        <button type="button" id="generateButton" class="button button-main">この条件でプランを作る</button>
+      </div>
+
+      <!-- プラン -->
+      <section id="planSection" class="block plan" hidden>
+        <div class="plan-head">
+          <h2 class="block-title">日帰りプラン <span id="planCount" class="plan-count"></span></h2>
+          <button type="button" id="closePlan" class="link-button">閉じる</button>
+        </div>
+        <div id="planBody"></div>
+        <button type="button" id="nextPlanButton" class="button button-sub">別の案にする（再生成）</button>
+      </section>
+
+      <!-- 行ける駅 -->
+      <section class="block">
+        <h2 class="block-title">行ける駅</h2>
+        <p id="summary" class="summary"></p>
+        <div id="resultList" class="results"></div>
+      </section>
+
+      <footer class="note">
+        運賃は2026年10月に調べた大人・きっぷの値段をもとに、距離から計算した目安です。
+        新幹線は自由席、全席指定の特急は指定席の料金です。駅から先のバス・地下鉄・フェリー代は予算にふくみません。
+        出かける前に乗換案内で確認してください。
+      </footer>
+    </aside>
+
+    <!-- ===== 地図 ===== -->
+    <main class="map-wrap">
+      <div id="map"></div>
+    </main>
+  </div>
+
+  <!-- 地図ライブラリ Leaflet の機能 -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- 読みこむ順番が大事：データ → 運賃の計算 → プラン作り → 画面の動き -->
+  <script src="js/data.js"></script>
+  <script src="js/route.js"></script>
+  <script src="js/planner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
